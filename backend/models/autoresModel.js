@@ -18,13 +18,13 @@ const buscarPorId = async (id) => {
 }
 
 const criar = async (nome_completo, nacionalidade, data_nascimento) => {
-    const autores = await db.query(
-        "INSERT INTO autores (nome_completo, nacionalidade, data_nascimento) VALUES (?, ?, ?);"
+    const [resultado] = await db.query(
+        "INSERT INTO autores (nome_completo, nacionalidade, data_nascimento) VALUES (?, ?, ?)",
         [nome_completo, nacionalidade, data_nascimento]
     );
 
     return {
-        id: autores.insertId,
+        id: resultado.insertId,
         nome_completo,
         nacionalidade,
         data_nascimento
@@ -33,30 +33,33 @@ const criar = async (nome_completo, nacionalidade, data_nascimento) => {
 
 const editar = async (id, nome_completo, nacionalidade, data_nascimento) => {
     await db.query(
-        "UPDATE produtos SET nome_completo=?, nacionalidade=?, data_nascimento=? WHERE id=?"
+        "UPDATE autores SET nome_completo = ?, nacionalidade = ?, data_nascimento = ? WHERE id = ?",
         [nome_completo, nacionalidade, data_nascimento, id]
-    )
+    );
+
     return {
         id,
         nome_completo,
         nacionalidade,
         data_nascimento
-    }
+    };
 }
 
 const excluir = async (id) => {
     const [resultado] = await db.query(
-    "DELETE FROM autores WHERE id=?"
-    [id]
+        "DELETE FROM autores WHERE id = ?",
+        [id]
     );
+
     return resultado.affectedRows;
 }
 
 const livrosAutor = async (id) => {
     const [livros] = await db.query(
-        "SELECT livros.titulo FROM autores_has_livros JOIN livros ON livros.id = autores_has_livros.livros_id WHERE autores_has_livros.autores_id = ?"
+        "SELECT livros.titulo FROM autores_has_livros JOIN livros ON livros.id = autores_has_livros.livros_id WHERE autores_has_livros.autores_id = ?",
         [id]
     );
+
     return livros;
 }
 
