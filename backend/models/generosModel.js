@@ -18,7 +18,7 @@ const buscarPorId = async (id) => {
 }
 
 const criar = async (nome) => {
-    const generos = await db.query(
+    const [generos] = await db.query(
         "INSERT INTO generos (nome) VALUES (?);",
         [nome]
     );
@@ -31,7 +31,7 @@ const criar = async (nome) => {
 
 const editar = async (id, nome) => {
     await db.query(
-        "UPDATE produtos SET nome=? WHERE id=?",
+        "UPDATE generos SET nome=? WHERE id=?",
         [nome, id]
     )
     return {

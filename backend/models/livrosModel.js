@@ -6,7 +6,7 @@ const buscarTodos = async () => {
     );
 
     return livros;
-}
+};
 
 const buscarPorId = async (id) => {
     const [livros] = await db.query(
@@ -15,29 +15,30 @@ const buscarPorId = async (id) => {
     );
 
     return livros[0];
-}
+};
 
 const criar = async (titulo, isbn, ano_publicacao, numero_paginas, sinopse) => {
-    const livros = await db.query(
-        "INSERT INTO livros (titulo, isbn, ano_publicacao, numero_paginas, sinopse) VALUES (?, ?, ?);",
+    const [resultado] = await db.query(
+        "INSERT INTO livros (titulo, isbn, ano_publicacao, numero_paginas, sinopse) VALUES (?, ?, ?, ?, ?)",
         [titulo, isbn, ano_publicacao, numero_paginas, sinopse]
     );
 
     return {
-        id: livros.insertId,
+        id: resultado.insertId,
         titulo,
         isbn,
         ano_publicacao,
         numero_paginas,
         sinopse
     };
-}
+};
 
 const editar = async (id, titulo, isbn, ano_publicacao, numero_paginas, sinopse) => {
     await db.query(
-        "UPDATE produtos SET titulo=?, isbn=?, ano_publicacao=?, numero_paginas=?, sinopse=? WHERE id=?",
+        "UPDATE livros SET titulo=?, isbn=?, ano_publicacao=?, numero_paginas=?, sinopse=? WHERE id=?",
         [titulo, isbn, ano_publicacao, numero_paginas, sinopse, id]
-    )
+    );
+
     return {
         id,
         titulo,
@@ -45,24 +46,26 @@ const editar = async (id, titulo, isbn, ano_publicacao, numero_paginas, sinopse)
         ano_publicacao,
         numero_paginas,
         sinopse
-    }
-}
+    };
+};
 
 const excluir = async (id) => {
     const [resultado] = await db.query(
-    "DELETE FROM livros WHERE id=?",
-    [id]
+        "DELETE FROM livros WHERE id=?",
+        [id]
     );
+
     return resultado.affectedRows;
-}
+};
 
 const emprestimoLivro = async (id) => {
     const [emprestimo] = await db.query(
         "SELECT * FROM emprestimos WHERE emprestimos.livros_id = ?",
         [id]
     );
+
     return emprestimo;
-}
+};
 
 module.exports = {
     buscarTodos,
@@ -71,4 +74,4 @@ module.exports = {
     editar,
     excluir,
     emprestimoLivro
-}
+};

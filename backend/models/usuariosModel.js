@@ -18,7 +18,7 @@ const buscarPorId = async (id) => {
 }
 
 const criar = async (nome_completo, cpf, email, telefone, data_nascimento) => {
-    const usuarios = await db.query(
+    const [usuarios] = await db.query(
         "INSERT INTO usuarios (nome_completo, cpf, email, telefone, data_nascimento) VALUES (?, ?, ?, ?, ?);",
         [nome_completo, cpf, email, telefone, data_nascimento]
     );
@@ -35,7 +35,7 @@ const criar = async (nome_completo, cpf, email, telefone, data_nascimento) => {
 
 const editar = async (id, nome_completo, cpf, email, telefone, data_nascimento) => {
     await db.query(
-        "UPDATE produtos SET nome_completo=?, cpf=?, email=?, telefone=?, data_nascimento=? WHERE id=?",
+        "UPDATE usuarios SET nome_completo=?, cpf=?, email=?, telefone=?, data_nascimento=? WHERE id=?",
         [nome_completo, cpf, email, telefone, data_nascimento, id]
     )
     return {
