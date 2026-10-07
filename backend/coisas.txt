@@ -1,6 +1,0 @@
-falta try/catches (fazer primeiro)
-fazer outros controllers
-fazer outros routes
-fazer readme
-
-(lembrete: outra api tá xarrada)
