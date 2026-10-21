@@ -23,13 +23,17 @@ CREATE TABLE generos (
     nome VARCHAR(80)
 );
 
-CREATE TABLE usuarios (
-    id INT PRIMARY KEY,
-    nome_completo VARCHAR(150),
-    cpf VARCHAR(20),
-    email VARCHAR(150),
-    telefone VARCHAR(20),
-    data_nascimento DATE
+CREATE TABLE Usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome_completo VARCHAR(150) NOT NULL, 
+    cpf VARBINARY(32) NOT NULL,
+    cpf_iv BINARY(12) NOT NULL,
+    cpf_tag BINARY(16) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    telefone BIGINT UNIQUE NOT NULL,
+    data_nascimento DATE NOT NULL,
+    senha_hash BINARY(64) NOT NULL,
+    senha_salt BINARY(16) NOT NULL
 );
 
 CREATE TABLE emprestimos (
@@ -79,11 +83,11 @@ INSERT INTO generos VALUES
 (3, 'Fantasia'),
 (4, 'Distopia');
 
-INSERT INTO usuarios VALUES
-(1, 'João Silva', '123.456.789-01', 'joao@email.com', '47999991111', '2000-03-15'),
-(2, 'Maria Oliveira', '234.567.890-12', 'maria@email.com', '47988882222', '1998-07-22'),
-(3, 'Pedro Santos', '345.678.901-23', 'pedro@email.com', '47977773333', '2002-11-08'),
-(4, 'Ana Costa', '456.789.012-34', 'ana@email.com', '47966664444', '1999-05-30');
+INSERT INTO Usuarios (id, nome_completo, cpf, cpf_iv, cpf_tag, email, telefone, data_nascimento, senha_hash, senha_salt) VALUES
+(1, 'João Silva', 0x12725797611fc6b3080feffb5934, 0x3dc66057c656470bdb8cc66a, 0xe59c440d4c9beed4f4f6f36e7ad6a45e, 'joao@email.com', 47999991111, '2000-03-15', 0xe2c40fa0c4da0b03078322203dc96677acb3b6f74c4bfa007a26c1907331dfadb91b2b89eb95f9fb22cd156660c43b13c565cb96bacdaecb0f1590a875c02fce, 0x0f7395452c1444287e213456aef6d760),
+(2, 'Maria Oliveira', 0xe879c9a91b4720794b783f6eca3d, 0xfe0f68db05a36735144e0093, 0x1c95367a6d2e467de1ffdbb7c0041c6f, 'maria@email.com', 47988882222, '1998-07-22', 0x6aa4a3ebba9fde20da0809a4b6a3ae9abe76c354d2c9c674c57241f39eeb75927c3cb1b6a9f6fd3c9a52b25ff3999eab4835346cf1da83d27b1061ee0baa7970, 0xeaf9b737b408aa5d95a4c82eff6bc002),
+(3, 'Pedro Santos', 0x294e1826318016364c2102337e04, 0x2ca36057a0da56a35f6d94c9, 0x4180330f7392730d40f94194ff83335b, 'pedro@email.com', 47977773333, '2002-11-08', 0xce6ca5536ab4385b4d8bb2fc4100e947f64c1ebb475fda0dd23145b6b6b7a44f8e1659648f94e54191fcfb15941158a05e0a80c143039311775c8ab8ce169e1b, 0xd7194436b0e0c79345407d08985e9264),
+(4, 'Ana Costa', 0x2736efc39f5adca6d59589097bc0, 0xaf3d44c17a1e3e7916ea7bda, 0xe1072ab76027df2bcb61e9bb5b90cd8a, 'ana@email.com', 47966664444, '1999-05-30', 0x3e65bba9b8be788c0a1322aad80a36c196ebc0cdd354393baf5878be2970872fc979f0cd42797ef13f63e9c5d9183c5a4693fcc1c6a8a7a27e53b3044a6ab966, 0x2d2dc36ea7b4550d11bc4eca27652ed6);
 
 INSERT INTO emprestimos VALUES
 (1, '2026-09-01', '2026-09-15', 1, 2),
