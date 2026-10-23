@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const generosController = require("../controllers/generosController");
 
-router.get("/generos", generosController.buscarGeneros);
-router.get("/generos/:id", generosController.buscarGenerosPorId);
-router.post("/generos", generosController.criarGeneros);
-router.put("/generos/:id", generosController.editarGeneros);
-router.delete("/generos/:id", generosController.excluirGeneros);
+router.get("/", generosController.buscarGeneros);
+router.get("/:id", generosController.buscarGenerosPorId);
+router.post("/", generosController.criarGeneros);
+router.put("/:id", generosController.editarGeneros);
+router.delete("/:id", generosController.excluirGeneros);
 
 module.exports = router;

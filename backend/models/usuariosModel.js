@@ -1,8 +1,8 @@
-const db = require("../config/db");
+const db = require("../config/database");
 
 async function buscarTodos() {
     const sql = `
-        SELECT id, nome_completo, email, telefone, data_nascimento 
+        SELECT id, nomeCompleto, email, telefone, dataNascimento 
         FROM Usuarios;
     `;
     const [resultado] = await db.execute(sql);
@@ -19,74 +19,66 @@ async function buscarPorId(id) {
 
 async function criar({ 
     cpf, 
-    cpfIv, 
-    cpf_iv, 
+    cpfIv,  
     cpfTag, 
-    cpf_tag, 
     nomeCompleto, 
-    nome_completo, 
-    dataAniversario, 
-    data_nascimento, 
+    dataNascimento, 
     email, 
     telefone, 
     senhaHash, 
-    senha_hash, 
-    senhaSalt, 
-    senha_salt 
+    senhaSalt
 }) {
-
-    // escolher o valor válido entre duas variáveis (facilitar o processo)
-    const nome = nome_completo || nomeCompleto;
-    const dataNasc = data_nascimento || dataAniversario;
-    const iv = cpf_iv || cpfIv;
-    const tag = cpf_tag || cpfTag;
-    const hash = senha_hash || senhaHash;
-    const salt = senha_salt || senhaSalt;
+    
 
     const sql = `
-        INSERT INTO Usuarios (cpf, cpf_iv, cpf_tag, nome_completo, data_nascimento, email, telefone, senha_hash, senha_salt)
+        INSERT INTO Usuarios (cpf, cpfIv, cpfTag, nomeCompleto, dataNascimento, email, telefone, senha_hash, senha_salt)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const [resultado] = await db.execute(sql, [
-        cpf, iv, tag, nome, dataNasc, email, telefone, hash, salt
+        cpf, cpfIv, cpfTag, nomeCompleto, dataNascimento, email, telefone, senhaHash, senhaSalt
     ]);
 
     return {
         id: resultado.insertId,
-        nome_completo: nome,
+        nomeCompleto: nomeCompleto,
         email,
         telefone,
-        data_nascimento: dataNasc
+        dataNascimento: dataNascimento
     };
 }
 
-async function editar(id, { nome_completo, nomeCompleto, data_nascimento, dataAniversario, email, telefone, cpf, cpf_iv, cpf_tag, senha_hash, senha_salt }) {
-    const nome = nome_completo || nomeCompleto;
-    const dataNasc = data_nascimento || dataAniversario;
+async function editar( id, dados ) {
+    const camposPermitidos = [
+        "cpf",
+        "cpfIv",
+        "cpfTag",
+        "nomeCompleto",
+        "dataAniversario",
+        "email",
+        "telefone",
+        "senhaHash",
+        "senhaSalt"
+    ];
 
-    if (cpf && cpf_iv && cpf_tag && senha_hash && senha_salt) {
-        const sql = `
-            UPDATE Usuarios 
-            SET nome_completo = ?, data_nascimento = ?, email = ?, telefone = ?, cpf = ?, cpf_iv = ?, cpf_tag = ?, senha_hash = ?, senha_salt = ?
-            WHERE id = ?;
-        `;
-        await db.execute(sql, [nome, dataNasc, email, telefone, cpf, cpf_iv, cpf_tag, senha_hash, senha_salt, id]);
-    } else {
-        const sql = `
-            UPDATE Usuarios 
-            SET nome_completo = ?, data_nascimento = ?, email = ?, telefone = ?
-            WHERE id = ?;
-        `;
-        await db.execute(sql, [nome, dataNasc, email, telefone, id]);
-    }
+    const campos = Object.keys(dados);
 
-    return {
-        id: Number(id),
-        nome_completo: nome,
-        data_nascimento: dataNasc,
-        email,
-        telefone
+    // campos.some() --> verifica se pelo menos UM campo atende x condição
+    if(campos.length === 0 || campos.some(campo => !camposPermitidos.includes(campo))) {
+        throw new Error("Campos de atualização inválidos")
     };
+
+    const atribuicoes = campos.map(campo => `${campo} = ?`).join(", ");
+    const valores = campos.map(campo => dados[campo]);
+    const sql = `
+    UPDATE usuarios
+    SET ${atribuicoes}
+    WHERE id = ?;
+    `;
+    //spread operator
+    const [resultado] = await db.execute(sql, [...valores, id])
+
+    return resultado;
+
 }
 
 async function excluir(id) {
